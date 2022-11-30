@@ -4,8 +4,10 @@ var nameInputEl = document.querySelector('#username');
 var repoContainerEl = document.querySelector('#repos-container');
 var repoSearchTerm = document.querySelector('#repo-search-term');
 var cityname = document.querySelector('#repo-search-term');
+var cardBody = document.querySelector('#searches');
 var Location1 = nameInputEl.value;
-
+// var today = dayjs().format('MMMM  dddd ');
+// console.log(today);
 var formSubmitHandler = function (event) {
   event.preventDefault();
   var username = nameInputEl.value.trim();
@@ -13,7 +15,7 @@ var formSubmitHandler = function (event) {
     getUserRepos(username);
 
   } else {
-    alert('Please enter a GitHub username');
+    alert('Please enter a city');
   }
 };
 var getUserRepos2 = function (lat, lon) {
@@ -33,7 +35,7 @@ var getUserRepos2 = function (lat, lon) {
       }
     })
     .catch(function (error) {
-      alert('Unable to connect to GitHub');
+      alert('Unable to connect to API');
     });
 };
 
@@ -50,6 +52,7 @@ var getUserRepos = function (user) {
             var lat = data[i].lat;
             var lon = data[i].lon;
             getUserRepos2(lat, lon);
+            savethis()
           }
         });
       } else {
@@ -57,12 +60,12 @@ var getUserRepos = function (user) {
       }
     })
     .catch(function (error) {
-      alert('Unable to connect to GitHub');
+      alert('Unable to connect to API');
     });
 };
 var displayRepos = function (data) {
   if (data.list === 0) {
-    repoContainerEl.textContent = 'No repositories found.';
+    repoContainerEl.textContent = 'No cities found.';
 
     return;
   }
@@ -70,7 +73,7 @@ var displayRepos = function (data) {
   cityname.textContent = username.value;
 console.log(username.value)
   for (var i = 0; i < 5; i++) {
-
+    data[i].main.temp = parseFloat(Math.round((data[i].main.temp-273.15)*1.8)+32);
     var speed = data[i].wind.speed;
     var humidity = data[i].main.humidity;
     var temp = data[i].main.temp;
@@ -80,7 +83,7 @@ console.log(username.value)
     repoEl.classList = 'list-item flex-row justify-space-between align-center';
 
     var titleEl = document.createElement('span');
-    titleEl.textContent = 'speed ' + my_list[0] + ' humidity ' + my_list[1] + ' temperature ' + my_list[2];
+    titleEl.textContent = 'speed ' + my_list[0] + ' MPH' + ' humidity ' + my_list[1] + ' %' + ' temperature ' + my_list[2] + ' ℉';
 
     repoEl.appendChild(titleEl);
 
@@ -92,4 +95,18 @@ console.log(username.value)
     repoContainerEl.appendChild(repoEl);
   }
 };
+function savethis() {
+  var storage1 = {
+    cityname: username.value
+  };
+  localStorage.setItem("storage1", JSON.stringify(storage1));
+}
+//retrieves text from localStorage
+function renderLastGrade() {
+  var storage1 = JSON.parse(localStorage.getItem("storage1"));
+  if (storage1 !== null) {
+   cardBody.textContent = storage1.cityname;
+  }
+};
 userFormEl.addEventListener('submit', formSubmitHandler);
+renderLastGrade();
