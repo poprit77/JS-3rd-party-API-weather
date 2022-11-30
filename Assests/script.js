@@ -8,7 +8,9 @@ var cardBody = document.querySelector('#searches');
 var Location1 = nameInputEl.value;
 // var today = dayjs().format('MMMM  dddd ');
 // console.log(today);
+//declare global storage
 var storage1 = [];
+//handles user input and pushes to 1st API
 var formSubmitHandler = function (event) {
   event.preventDefault();
   var username = nameInputEl.value.trim();
@@ -21,6 +23,7 @@ var formSubmitHandler = function (event) {
   savethis();
   renderLastGrade();
 };
+//uses lon and lat to find weather data oon city
 var getUserRepos2 = function (lat, lon) {
   var apiUrl2 = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=06bb58b25b45536bf564aaa75898fb91';
 
@@ -41,7 +44,7 @@ var getUserRepos2 = function (lat, lon) {
       alert('Unable to connect to API');
     });
 };
-
+//uses city name to return lat and lon from API
 var getUserRepos = function (user) {
   var apiUrl = 'https://api.openweathermap.org/geo/1.0/direct?q={' + user + '}&appid=06bb58b25b45536bf564aaa75898fb91';
 
@@ -66,6 +69,7 @@ var getUserRepos = function (user) {
       alert('Unable to connect to API');
     });
 };
+//displays weather data in index format from API #2
 var displayRepos = function (data) {
   if (data.list === 0) {
     repoContainerEl.textContent = 'No cities found.';
@@ -83,21 +87,22 @@ var displayRepos = function (data) {
     var my_list = [speed, humidity, temp];
 
     var repoEl = document.createElement('div');
-    repoEl.classList = 'list-item flex-row justify-space-between align-center';
+    repoEl.classList = 'list-item flex-row justify-space-between align-center col';
 
-    var titleEl = document.createElement('span');
+    var titleEl = document.createElement('card');
     titleEl.textContent = 'speed ' + my_list[0] + ' MPH' + ' humidity ' + my_list[1] + ' %' + ' temperature ' + my_list[2] + ' ℉';
 
     repoEl.appendChild(titleEl);
 
-    var statusEl = document.createElement('span');
-    statusEl.classList = 'flex-row align-center';
+    var statusEl = document.createElement('card');
+    statusEl.classList = 'flex-row align-center col';
 
     repoEl.appendChild(statusEl);
 
     repoContainerEl.appendChild(repoEl);
   }
 };
+//saves user input to local storage
 function savethis() {
   localStorage.setItem("storage1", JSON.stringify(storage1));
 
@@ -109,12 +114,29 @@ function renderLastGrade() {
     cardBody.textContent = storage1.cityname;
     for (var i = 0; i < storage1.length; i++) {
       var todo = storage1[i];
-
+//creates boxes with button to search former searches again
       var li = document.createElement("li");
       li.textContent = todo;
       li.setAttribute("data-index", i);
+      var button = document.createElement("button");
+      button.textContent = "Search again";
+      li.appendChild(button);
       cardBody.appendChild(li);
-    }}
-  };
-  userFormEl.addEventListener('submit', formSubmitHandler);
-  renderLastGrade();
+    }
+  }
+};
+// incomplete
+cardBody.addEventListener("click", function (event) {
+  event.preventDefault();
+  var element = event.target;
+  console.log(event.target);
+  if (element.matches("button") === true) {
+  var username = element.parentElement.getAttribute("data-index");
+  if (username) {
+    getUserRepos(username);
+  } else {
+    alert('Please enter a city');
+  }
+}});
+userFormEl.addEventListener('submit', formSubmitHandler);
+renderLastGrade();
