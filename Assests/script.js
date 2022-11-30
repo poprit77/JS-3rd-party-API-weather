@@ -8,15 +8,18 @@ var cardBody = document.querySelector('#searches');
 var Location1 = nameInputEl.value;
 // var today = dayjs().format('MMMM  dddd ');
 // console.log(today);
+var storage1 = [];
 var formSubmitHandler = function (event) {
   event.preventDefault();
   var username = nameInputEl.value.trim();
   if (username) {
     getUserRepos(username);
-
+    storage1.push(username);
   } else {
     alert('Please enter a city');
   }
+  savethis();
+  renderLastGrade();
 };
 var getUserRepos2 = function (lat, lon) {
   var apiUrl2 = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=06bb58b25b45536bf564aaa75898fb91';
@@ -52,7 +55,7 @@ var getUserRepos = function (user) {
             var lat = data[i].lat;
             var lon = data[i].lon;
             getUserRepos2(lat, lon);
-            savethis()
+
           }
         });
       } else {
@@ -71,9 +74,9 @@ var displayRepos = function (data) {
   }
 
   cityname.textContent = username.value;
-console.log(username.value)
+  console.log(username.value)
   for (var i = 0; i < 5; i++) {
-    data[i].main.temp = parseFloat(Math.round((data[i].main.temp-273.15)*1.8)+32);
+    data[i].main.temp = parseFloat(Math.round((data[i].main.temp - 273.15) * 1.8) + 32);
     var speed = data[i].wind.speed;
     var humidity = data[i].main.humidity;
     var temp = data[i].main.temp;
@@ -96,17 +99,22 @@ console.log(username.value)
   }
 };
 function savethis() {
-  var storage1 = {
-    cityname: username.value
-  };
   localStorage.setItem("storage1", JSON.stringify(storage1));
+
 }
 //retrieves text from localStorage
 function renderLastGrade() {
   var storage1 = JSON.parse(localStorage.getItem("storage1"));
   if (storage1 !== null) {
-   cardBody.textContent = storage1.cityname;
-  }
-};
-userFormEl.addEventListener('submit', formSubmitHandler);
-renderLastGrade();
+    cardBody.textContent = storage1.cityname;
+    for (var i = 0; i < storage1.length; i++) {
+      var todo = storage1[i];
+
+      var li = document.createElement("li");
+      li.textContent = todo;
+      li.setAttribute("data-index", i);
+      cardBody.appendChild(li);
+    }}
+  };
+  userFormEl.addEventListener('submit', formSubmitHandler);
+  renderLastGrade();
