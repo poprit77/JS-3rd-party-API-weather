@@ -12,7 +12,7 @@ var Location1 = nameInputEl.value;
 var storage1 = [];
 //handles user input and pushes to 1st API
 var formSubmitHandler = function (event) {
-  repoContainerEl.textContent= '';
+
   event.preventDefault();
   var username = nameInputEl.value.trim();
   if (username) {
@@ -48,7 +48,7 @@ var getUserRepos2 = function (lat, lon) {
 //uses city name to return lat and lon from API
 var getUserRepos = function (user) {
   var apiUrl = 'https://api.openweathermap.org/geo/1.0/direct?q={' + user + '}&appid=06bb58b25b45536bf564aaa75898fb91';
-
+  repoContainerEl.textContent= '';
   fetch(apiUrl)
     .then(function (response) {
       if (response.ok) {
@@ -133,9 +133,9 @@ function renderLastGrade() {
 cardBody.addEventListener("click", function (event) {
   event.preventDefault();
   var element = event.target;
-  console.log(storage1);
+  console.log(element.getAttribute('data-index'));
   if (element.matches("button") === true) {
-  var username = element.parentElement.getAttribute("data-index");
+  var username = element.getAttribute("data-index");
   if (username) {
     getUserRepos(username);
   } 
