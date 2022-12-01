@@ -12,6 +12,7 @@ var Location1 = nameInputEl.value;
 var storage1 = [];
 //handles user input and pushes to 1st API
 var formSubmitHandler = function (event) {
+  repoContainerEl.textContent= '';
   event.preventDefault();
   var username = nameInputEl.value.trim();
   if (username) {
@@ -71,6 +72,7 @@ var getUserRepos = function (user) {
 };
 //displays weather data in index format from API #2
 var displayRepos = function (data) {
+
   if (data.list === 0) {
     repoContainerEl.textContent = 'No cities found.';
 
@@ -112,16 +114,18 @@ function renderLastGrade() {
   var storage1 = JSON.parse(localStorage.getItem("storage1"));
   if (storage1 !== null) {
     cardBody.textContent = storage1.cityname;
+    console.log(storage1)
     for (var i = 0; i < storage1.length; i++) {
       var todo = storage1[i];
 //creates boxes with button to search former searches again
-      var li = document.createElement("li");
-      li.textContent = todo;
-      li.setAttribute("data-index", i);
-      var button = document.createElement("button");
-      button.textContent = "Search again";
-      li.appendChild(button);
-      cardBody.appendChild(li);
+      var btn = document.createElement("button");
+      btn.textContent = todo;
+      btn.setAttribute("data-index", storage1[i]);
+      // var button = document.createElement("button");
+      // button.getAttribute()
+      // button.textContent = "Search again";
+      // btn.appendChild(button);
+      cardBody.appendChild(btn);
     }
   }
 };
@@ -129,14 +133,12 @@ function renderLastGrade() {
 cardBody.addEventListener("click", function (event) {
   event.preventDefault();
   var element = event.target;
-  console.log(event.target);
+  console.log(storage1);
   if (element.matches("button") === true) {
   var username = element.parentElement.getAttribute("data-index");
   if (username) {
     getUserRepos(username);
-  } else {
-    alert('Please enter a city');
-  }
+  } 
 }});
 userFormEl.addEventListener('submit', formSubmitHandler);
 renderLastGrade();
